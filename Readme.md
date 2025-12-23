@@ -1,4 +1,5 @@
-# Plasma Cover Art Wallpaper
+# Ostin Music Wallpaper Changer for Plasma
+
 
 ![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)
 ![Platform](https://img.shields.io/badge/Platform-Arch%20Linux%20%7C%20KDE%20Plasma-1793d1)
@@ -38,7 +39,7 @@ Descarga el script: Clona este repositorio o descarga el archivo plasmamusicwall
 
 
 ```bash
-git clone [https://github.com/ojag95/NOMBRE_DEL_REPO.git](https://github.com/ojag95/NOMBRE_DEL_REPO.git)
+git clone [https://github.com/ojag95/Ostin-Music-Wallpaper-Changer-for-Plasma.git](https://github.com/ojag95/Ostin-Music-Wallpaper-Changer-for-Plasma.git)
 cd NOMBRE_DEL_REPO
 ```
 
