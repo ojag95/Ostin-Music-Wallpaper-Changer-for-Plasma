@@ -1,32 +1,19 @@
 #!/bin/bash
-# Copyright (C) 2025 Oscar Josue Avila Gutierrez (ojag95)
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-# --- CONFIGURACIÓN ---
+# --- CONFIGURATION ---
+# DEFAULT_WALLPAPER Fallback Wallpaper when the music is stopped
+# TMP_DIR Temporary directory to store image files
 DEFAULT_WALLPAPER="/home/oscar/Imágenes/Wallpapers/roberto-shumski-e2rlqUNDzms-unsplash.jpg"
-# Directorio temporal
 TMP_DIR="/tmp"
-# ---------------------
 
+# Runtime Variables
 LAST_ART_URL=""
 CURRENT_COVER_FILE=""
 
 set_wallpaper() {
     local img_path="$1"
     
-    # Script para KDE Plasma
+    # KDE Plasma script
     qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "
         var allDesktops = desktops();
         for (i=0; i<allDesktops.length; i++) {
@@ -38,26 +25,26 @@ set_wallpaper() {
     "
 }
 
-echo "Iniciando monitor v2 (Anti-Caché)..."
+echo "Starting audio monitor"
 
 while true; do
-    # Buscamos solo reproductores en estado Playing
+    # We look for playback
     PLAYER=$(playerctl -l 2>/dev/null | xargs -I{} sh -c 'if [ "$(playerctl -p {} status)" = "Playing" ]; then echo {}; fi' | head -n 1)
     
     if [ -n "$PLAYER" ]; then
-        # HAY MÚSICA SONANDO
+        #  There is music playing
         NEW_ART_URL=$(playerctl -p "$PLAYER" metadata mpris:artUrl 2>/dev/null)
 
-        # Solo actuamos si la URL es diferente a la anterior
+        # If new art url is different from the last one
         if [ "$NEW_ART_URL" != "$LAST_ART_URL" ] && [ -n "$NEW_ART_URL" ]; then
             
-            # Generamos un nombre único basado en la hora para engañar a KDE
+            # We generate a ne filename to avoid "caching" issues
             TIMESTAMP=$(date +%s%N)
             NEW_COVER_FILE="${TMP_DIR}/cover_${TIMESTAMP}.jpg"
 
-            echo "🎵 Nueva portada detectada. Actualizando..."
+            echo "New song detected. Updating..."
 
-            # Descargamos o Copiamos la imagen
+            # Downloading (or copying) the cover
             if [[ $NEW_ART_URL == http* ]]; then
                 curl -s -o "$NEW_COVER_FILE" "$NEW_ART_URL"
             elif [[ $NEW_ART_URL == file://* ]]; then
@@ -65,11 +52,11 @@ while true; do
                 cp "$LOCAL_PATH" "$NEW_COVER_FILE"
             fi
             
-            # Cambiamos el fondo
+            # Update Wallpaper
             if [ -f "$NEW_COVER_FILE" ]; then
                 set_wallpaper "$NEW_COVER_FILE"
                 
-                # Limpieza: Borramos la portada anterior para no llenar /tmp
+                # Cleaning /tmp for avoiding get out of RAM
                 if [ -n "$CURRENT_COVER_FILE" ] && [ "$CURRENT_COVER_FILE" != "$NEW_COVER_FILE" ]; then
                     rm -f "$CURRENT_COVER_FILE"
                 fi
@@ -80,12 +67,12 @@ while true; do
         fi
 
     else
-        # NO HAY MÚSICA (Pausado o Detenido)
+        # There is no music playback (Paused or stopped)
         if [ "$LAST_ART_URL" != "DEFAULT" ]; then
-            echo "⏸️ Música detenida. Restaurando fondo original..."
+            echo "Music stopped. Restoring original wallpaper..."
             set_wallpaper "$DEFAULT_WALLPAPER"
             
-            # Limpieza final
+            # Cleaning up
             if [ -n "$CURRENT_COVER_FILE" ]; then
                 rm -f "$CURRENT_COVER_FILE"
                 CURRENT_COVER_FILE=""
@@ -95,6 +82,6 @@ while true; do
         fi
     fi
 
-    # Revisamos cada 1.5 segundos
+    # We look every 1.5 seconds
     sleep 1.5
 done
