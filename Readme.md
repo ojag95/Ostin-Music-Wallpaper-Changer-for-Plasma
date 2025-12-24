@@ -66,13 +66,19 @@ Para que el script funcione siempre sin tener la terminal abierta:
 
 * Abre Preferencias del Sistema (System Settings).
 
-* Ve a Arranque y Apagado (Startup and Shutdown) -> Autoarranque (Autostart).
+* Ve a Sistema -> Inicio automático.
 
 * Haz clic en + Añadir... -> Añadir Script de inicio de sesión.
 
 * Selecciona la ruta donde guardaste plasmamusicwallpaperchanger.sh.
 
 ¡Listo! Ahora tu fondo de pantalla reaccionará a tu música cada vez que inicies sesión.
+
+
+### Demo
+
+https://github.com/user-attachments/assets/89638782-84ed-4510-a0de-d128eff80fcb
+
 
 ### Licencia
 
